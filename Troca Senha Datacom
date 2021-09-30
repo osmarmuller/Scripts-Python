@@ -1,0 +1,39 @@
+import time
+import getpass
+import sys
+#from pexpect import pxssh
+import paramiko
+
+#VETOR DE IPS 
+vetip = ["172.31.240.50","172.31.240.26","172.31.240.21","172.31.240.49","172.31.240.27","172.31.240.53","172.31.240.52","172.31.240.36","172.31.240.32","172.31.240.46","172.31.240.45","172.31.240.51","172.31.240.47","172.31.240.48","172.31.240.39","172.31.240.42","172.31.240.41","172.31.240.25"]
+
+#USUARIO DE ACESSO AOS DATACOM
+usr = "admin"
+psswd = "SENHA_ATUAL"
+newpsswd = "NOVA_SENHA"
+
+#COMANDO
+command1 = "config no-confirm"
+command2 = "aaa user admin change-password old-password psswd new-password newpsswd confirm-password newpsswd "
+
+for x in xrange(0,len(vetip)):
+
+	dtcmip = vetip
+	try:
+		cli = paramiko.SSHClient()
+		cli.load_system_host_keys()
+		cli.set_missing_host_key_policy(paramiko.WarningPolicy())
+		cli.connect(dtcmip, port=2220, username=usr, password=psswd)
+		time.sleep(7)	
+
+		stdin1, stdout1, stderr1 = cli.exec_command(command1)
+		print(command1)
+		print("Entrando em modo de configuração")
+		time.sleep(3)
+
+		stdin2, stdout2, stderr2 = cli.exec_command(command2)
+		print(command2)
+		print("trocando senha de " + dtcmip)
+
+	finally:
+			cli.close()
